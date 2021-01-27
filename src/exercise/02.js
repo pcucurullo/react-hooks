@@ -3,14 +3,33 @@
 
 import * as React from 'react'
 
-function useLocalStorage(key, initialValue = '') {
-  const [state, setState] = React.useState(() =>
-    window.localStorage.getItem(key) || initialValue
+function useLocalStorage(
+  key,
+  initialValue = '',
+  {
+    serialize = JSON.stringify,
+    deserialize = JSON.parse
+  } = {}) {
+  const [state, setState] = React.useState(() => {
+      const localValue = window.localStorage.getItem(key);
+      return localValue
+        ? deserialize(localValue)
+        : typeof initialValue === 'function'
+        ? initialValue()
+        : initialValue;
+    }
   )
 
+  const prevKeyRef = React.useRef(key);
+
   React.useEffect(() => {
-    window.localStorage.setItem(key, state.toString());
-  }, [state, key]);
+    const prevKey = prevKeyRef.current
+    if (prevKey !== key) {
+      window.localStorage.removeItem(prevKey);
+    }
+    prevKeyRef.current = key;
+    window.localStorage.setItem(key, serialize(state));
+  }, [state, key, serialize]);
 
   return [state, setState];
 }
@@ -53,5 +72,5 @@ export default App
  useState checks the initial value which can sometimes be costly, but it can receive a function instead of a value to only on the first render and optimize. This is called lazy state initialization.
  Components re-render if their siblings re-render.
  A custom hook name should start with "use" and it will use other React hooks inside.
-
+ When creating a custom hook it's really important to think about which params the user might want to change.
  */
