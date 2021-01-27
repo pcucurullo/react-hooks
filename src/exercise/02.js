@@ -3,19 +3,29 @@
 
 import * as React from 'react'
 
+function useLocalStorage(myVar, initialValue) {
+  const [variable, setVariable] = React.useState(() =>
+    window.localStorage.getItem(`${myVar}`) || initialValue
+  )
+
+  React.useEffect(() => {
+    window.localStorage.setItem(`${myVar}`, variable.toString());
+  }, [variable, myVar]);
+
+  return [variable, setVariable];
+}
+
 function Greeting({initialName = ''}) {
   // 🐨 initialize the state to the value from localStorage
   // 💰 window.localStorage.getItem('name') || initialName
-  const [name, setName] = React.useState(() =>
-    window.localStorage.getItem('name') || initialName
-  )
+  const [name, setName] = useLocalStorage('name', initialName);
 
   // 🐨 Here's where you'll use `React.useEffect`.
   // The callback should set the `name` in localStorage.
   // 💰 window.localStorage.setItem('name', name)
-  React.useEffect(() => {
-    window.localStorage.setItem('name', name);
-  }, [name]);
+  // React.useEffect(() => {
+  //   window.localStorage.setItem('name', name);
+  // }, [name]);
 
   function handleChange(event) {
     setName(event.target.value)
@@ -40,5 +50,7 @@ export default App
 
 
 /**
- useState checks the initial value which can sometimes be costly, but it can receive a function instead of a value to only on the first render and optimize.
+ useState checks the initial value which can sometimes be costly, but it can receive a function instead of a value to only on the first render and optimize. This is called lazy state initialization.
+ Components re-render if their siblings re-render.
+
  */
