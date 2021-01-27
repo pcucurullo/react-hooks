@@ -3,7 +3,7 @@
 
 import * as React from 'react'
 
-function useLocalStorage(key, initialValue) {
+function useLocalStorage(key, initialValue = '') {
   const [state, setState] = React.useState(() =>
     window.localStorage.getItem(`${key}`) || initialValue
   )
@@ -52,5 +52,6 @@ export default App
 /**
  useState checks the initial value which can sometimes be costly, but it can receive a function instead of a value to only on the first render and optimize. This is called lazy state initialization.
  Components re-render if their siblings re-render.
+ A custom hook name should start with "use" and it will use other React hooks inside.
 
  */
