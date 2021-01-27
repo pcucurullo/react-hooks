@@ -5,11 +5,11 @@ import * as React from 'react'
 
 function useLocalStorage(key, initialValue = '') {
   const [state, setState] = React.useState(() =>
-    window.localStorage.getItem(`${key}`) || initialValue
+    window.localStorage.getItem(key) || initialValue
   )
 
   React.useEffect(() => {
-    window.localStorage.setItem(`${key}`, state.toString());
+    window.localStorage.setItem(key, state.toString());
   }, [state, key]);
 
   return [state, setState];
