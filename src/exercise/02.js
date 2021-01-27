@@ -6,7 +6,9 @@ import * as React from 'react'
 function Greeting({initialName = ''}) {
   // 🐨 initialize the state to the value from localStorage
   // 💰 window.localStorage.getItem('name') || initialName
-  const [name, setName] = React.useState(window.localStorage.getItem('name') || initialName)
+  const [name, setName] = React.useState(() =>
+    window.localStorage.getItem('name') || initialName
+  )
 
   // 🐨 Here's where you'll use `React.useEffect`.
   // The callback should set the `name` in localStorage.
@@ -35,3 +37,8 @@ function App() {
 }
 
 export default App
+
+
+/**
+ useState checks the initial value which can sometimes be costly, but it can receive a function instead of a value to only on the first render and optimize.
+ */
