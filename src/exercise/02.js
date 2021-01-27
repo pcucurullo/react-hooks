@@ -3,16 +3,16 @@
 
 import * as React from 'react'
 
-function useLocalStorage(myVar, initialValue) {
-  const [variable, setVariable] = React.useState(() =>
-    window.localStorage.getItem(`${myVar}`) || initialValue
+function useLocalStorage(key, initialValue) {
+  const [state, setState] = React.useState(() =>
+    window.localStorage.getItem(`${key}`) || initialValue
   )
 
   React.useEffect(() => {
-    window.localStorage.setItem(`${myVar}`, variable.toString());
-  }, [variable, myVar]);
+    window.localStorage.setItem(`${key}`, state.toString());
+  }, [state, key]);
 
-  return [variable, setVariable];
+  return [state, setState];
 }
 
 function Greeting({initialName = ''}) {
