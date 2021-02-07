@@ -7,6 +7,8 @@ import { useLocalStorageState } from '../utils'
 function Board() {
   const initialBoard = Array(9).fill(null);
   const [squares, setSquares] = useLocalStorageState('squares', initialBoard);
+  const [history, setHistory] = useLocalStorageState('tic-tac-toe:historyasdf',[]);
+  const [step, setStep] = useLocalStorageState('tic-tac-toe:step', 0);
 
   const nextValue = calculateNextValue(squares);
   const winner = calculateWinner(squares);
@@ -17,11 +19,15 @@ function Board() {
       const squaresCopy = [...squares];
       squaresCopy[square] = nextValue;
       setSquares(squaresCopy);
+      setHistory([...history, squaresCopy]);
+      setStep(step + 1);
     }
   }
 
   function restart() {
     setSquares(initialBoard);
+    setHistory([]);
+    setStep(0);
   }
 
   function renderSquare(i) {
