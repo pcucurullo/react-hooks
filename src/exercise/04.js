@@ -2,42 +2,11 @@
 // http://localhost:3000/isolated/exercise/04.js
 
 import * as React from 'react'
-
-
-function useLocalStorage(
-  key,
-  initialValue = '',
-  {
-    serialize = JSON.stringify,
-    deserialize = JSON.parse
-  } = {}) {
-  const [state, setState] = React.useState(() => {
-      const localValue = window.localStorage.getItem(key);
-      return localValue
-        ? deserialize(localValue)
-        : typeof initialValue === 'function'
-          ? initialValue()
-          : initialValue;
-    }
-  )
-
-  const prevKeyRef = React.useRef(key);
-
-  React.useEffect(() => {
-    const prevKey = prevKeyRef.current
-    if (prevKey !== key) {
-      window.localStorage.removeItem(prevKey);
-    }
-    prevKeyRef.current = key;
-    window.localStorage.setItem(key, serialize(state));
-  }, [state, key, serialize]);
-
-  return [state, setState];
-}
+import { useLocalStorageState } from '../utils'
 
 function Board() {
   const initialBoard = Array(9).fill(null);
-  const [squares, setSquares] = useLocalStorage('squares', initialBoard);
+  const [squares, setSquares] = useLocalStorageState('squares', initialBoard);
 
   const nextValue = calculateNextValue(squares);
   const winner = calculateWinner(squares);
