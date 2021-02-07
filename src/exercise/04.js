@@ -4,32 +4,7 @@
 import * as React from 'react'
 import { useLocalStorageState } from '../utils'
 
-function Board() {
-  const initialBoard = Array(9).fill(null);
-  const [squares, setSquares] = useLocalStorageState('squares', initialBoard);
-  const [history, setHistory] = useLocalStorageState('tic-tac-toe:historyasdf',[]);
-  const [step, setStep] = useLocalStorageState('tic-tac-toe:step', 0);
-
-  const nextValue = calculateNextValue(squares);
-  const winner = calculateWinner(squares);
-  const status = calculateStatus(winner, squares, nextValue);
-
-  function selectSquare(square) {
-    if (!winner && squares[square] === null) {
-      const squaresCopy = [...squares];
-      squaresCopy[square] = nextValue;
-      setSquares(squaresCopy);
-      setHistory([...history, squaresCopy]);
-      setStep(step + 1);
-    }
-  }
-
-  function restart() {
-    setSquares(initialBoard);
-    setHistory([]);
-    setStep(0);
-  }
-
+function Board({onClick: selectSquare, squares}) {
   function renderSquare(i) {
     return (
       <button className="square" onClick={() => selectSquare(i)}>
@@ -40,7 +15,6 @@ function Board() {
 
   return (
     <div>
-      <div className="status">{status}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}
@@ -56,18 +30,63 @@ function Board() {
         {renderSquare(7)}
         {renderSquare(8)}
       </div>
-      <button className="restart" onClick={restart}>
-        restart
-      </button>
     </div>
   )
 }
 
 function Game() {
+  const initialBoard = Array(9).fill(null);
+  const [squares, setSquares] = useLocalStorageState('squares', initialBoard);
+  const [history, setHistory] = useLocalStorageState('tic-tac-toe:history',[]);
+  const [step, setStep] = useLocalStorageState('tic-tac-toe:step', 0);
+
+
+  const nextValue = calculateNextValue(squares);
+  const winner = calculateWinner(squares);
+  const status = calculateStatus(winner, squares, nextValue);
+
+  function selectSquare(square) {
+    if (!winner && squares[square] === null) {
+      const squaresCopy = [...squares];
+      squaresCopy[square] = nextValue;
+      setSquares(squaresCopy);
+      setStep(step + 1);
+      setHistory([...((history.length > step) ? history.slice(0, step + 1) : history), squaresCopy]);
+    }
+  }
+
+  function restart() {
+    setSquares(initialBoard);
+    setHistory([]);
+    setStep(0);
+  }
+
+  const moves = history.map((stepBoard, index) => {
+    const goToStep = () => {
+      setSquares(stepBoard);
+      setStep(index);
+    }
+    return (
+      <li key={index}>
+        <button
+          disabled={index === step}
+          onClick={goToStep}>{`Step ${index} by ${index % 2 === 0 ? 'X' : 'O'}`}
+        </button>
+      </li>
+    );
+  });
+
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        <Board  onClick={selectSquare} squares={squares} />
+        <button className="restart" onClick={restart}>
+          restart
+        </button>
+      </div>
+      <div className="game-info">
+        <div className="status">{status}</div>
+        <ol>{moves}</ol>
       </div>
     </div>
   )
