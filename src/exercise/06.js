@@ -15,17 +15,15 @@ function PokemonInfo({pokemonName}) {
     if (!pokemonName || pokemonName === '') return;
     setPokemon(null);
 
-    fetchPokemon('Pikachu').then(
+    fetchPokemon(pokemonName).then(
         pokemonData => {
           setPokemon(pokemonData);
         },
       )
   }, [pokemonName]);
 
-  // This is supposedly required in the exercise and is present in the final solution and yet it breaks the tests :shrug:
-  // if (!pokemonName || pokemonName === '') return 'Submit a pokemon';
   return (
-    pokemon ? <PokemonDataView pokemon={pokemon} /> : <PokemonInfoFallback name={pokemonName} />
+    pokemonName ? pokemon ? <PokemonDataView pokemon={pokemon} /> : <PokemonInfoFallback name={pokemonName} /> : 'Submit a pokemon'
   );
 }
 
