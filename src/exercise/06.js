@@ -5,22 +5,23 @@ import * as React from 'react'
 import {PokemonForm, fetchPokemon, PokemonInfoFallback, PokemonDataView} from '../pokemon'
 
 function PokemonInfo({pokemonName}) {
-  const [pokemon, setPokemon] = React.useState(null);
-  const [error, setError] = React.useState(null);
-  const [status, setStatus] = React.useState('idle');
+  const [state, setState] = React.useState({
+    status: 'idle',
+    pokemon: null,
+    error: null
+  });
+  const {status, pokemon, error} = state;
 
   React.useEffect(() => {
     if (!pokemonName || pokemonName === '') return;
-    setStatus('pending');
+    setState({status: 'pending', pokemon: null, error: null});
 
     fetchPokemon(pokemonName).then(
-        pokemonData => {
-          setPokemon(pokemonData);
-          setStatus('resolved');
+        pokemon => {
+          setState({status: 'resolved', pokemon, error: null});
         },
         error => {
-          setError(error);
-          setStatus('rejected');
+          setState({status: 'rejected', pokemon: null, error});
         }
       )
   }, [pokemonName]);
